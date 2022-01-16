@@ -35,6 +35,14 @@ func NewAABB() *AABB {
 	}
 }
 
+func (aabb *AABB) Center() vector.Vector3 {
+	if aabb.center == nil {
+		center := aabb.max.Add(aabb.min).DivByConstant(2)
+		aabb.center = &center
+	}
+	return *aabb.center
+}
+
 func (aabb *AABB) CenterPos(x, y, z float64) vector.Vector3 {
 	if aabb.center == nil {
 		center := aabb.max.Add(aabb.min).DivByConstant(2)
@@ -75,144 +83,6 @@ func NewVector2Int(x, y int) Vector2Int {
 	return Vector2Int{X: x, Y: y}
 }
 
-var landmarkIrises = []Vector2Int{
-	NewVector2Int(475, 476),
-	NewVector2Int(477, 474),
-	NewVector2Int(469, 470),
-	NewVector2Int(472, 469),
-	NewVector2Int(471, 472),
-	NewVector2Int(474, 475),
-	NewVector2Int(476, 477),
-	NewVector2Int(470, 471),
-}
-
-var landmarkContours = []Vector2Int{
-	NewVector2Int(270, 409),
-	NewVector2Int(176, 149),
-	NewVector2Int(37, 0),
-	NewVector2Int(84, 17),
-	NewVector2Int(318, 324),
-	NewVector2Int(293, 334),
-	NewVector2Int(386, 385),
-	NewVector2Int(7, 163),
-	NewVector2Int(33, 246),
-	NewVector2Int(17, 314),
-	NewVector2Int(374, 380),
-	NewVector2Int(251, 389),
-	NewVector2Int(390, 373),
-	NewVector2Int(267, 269),
-	NewVector2Int(295, 285),
-	NewVector2Int(389, 356),
-	NewVector2Int(173, 133),
-	NewVector2Int(33, 7),
-	NewVector2Int(377, 152),
-	NewVector2Int(158, 157),
-	NewVector2Int(405, 321),
-	NewVector2Int(54, 103),
-	NewVector2Int(263, 466),
-	NewVector2Int(324, 308),
-	NewVector2Int(67, 109),
-	NewVector2Int(409, 291),
-	NewVector2Int(157, 173),
-	NewVector2Int(454, 323),
-	NewVector2Int(388, 387),
-	NewVector2Int(78, 191),
-	NewVector2Int(148, 176),
-	NewVector2Int(311, 310),
-	NewVector2Int(39, 37),
-	NewVector2Int(249, 390),
-	NewVector2Int(144, 145),
-	NewVector2Int(402, 318),
-	NewVector2Int(80, 81),
-	NewVector2Int(310, 415),
-	NewVector2Int(153, 154),
-	NewVector2Int(384, 398),
-	NewVector2Int(397, 365),
-	NewVector2Int(234, 127),
-	NewVector2Int(103, 67),
-	NewVector2Int(282, 295),
-	NewVector2Int(338, 297),
-	NewVector2Int(378, 400),
-	NewVector2Int(127, 162),
-	NewVector2Int(321, 375),
-	NewVector2Int(375, 291),
-	NewVector2Int(317, 402),
-	NewVector2Int(81, 82),
-	NewVector2Int(154, 155),
-	NewVector2Int(91, 181),
-	NewVector2Int(334, 296),
-	NewVector2Int(297, 332),
-	NewVector2Int(269, 270),
-	NewVector2Int(150, 136),
-	NewVector2Int(109, 10),
-	NewVector2Int(356, 454),
-	NewVector2Int(58, 132),
-	NewVector2Int(312, 311),
-	NewVector2Int(152, 148),
-	NewVector2Int(415, 308),
-	NewVector2Int(161, 160),
-	NewVector2Int(296, 336),
-	NewVector2Int(65, 55),
-	NewVector2Int(61, 146),
-	NewVector2Int(78, 95),
-	NewVector2Int(380, 381),
-	NewVector2Int(398, 362),
-	NewVector2Int(361, 288),
-	NewVector2Int(246, 161),
-	NewVector2Int(162, 21),
-	NewVector2Int(0, 267),
-	NewVector2Int(82, 13),
-	NewVector2Int(132, 93),
-	NewVector2Int(314, 405),
-	NewVector2Int(10, 338),
-	NewVector2Int(178, 87),
-	NewVector2Int(387, 386),
-	NewVector2Int(381, 382),
-	NewVector2Int(70, 63),
-	NewVector2Int(61, 185),
-	NewVector2Int(14, 317),
-	NewVector2Int(105, 66),
-	NewVector2Int(300, 293),
-	NewVector2Int(382, 362),
-	NewVector2Int(88, 178),
-	NewVector2Int(185, 40),
-	NewVector2Int(46, 53),
-	NewVector2Int(284, 251),
-	NewVector2Int(400, 377),
-	NewVector2Int(136, 172),
-	NewVector2Int(323, 361),
-	NewVector2Int(13, 312),
-	NewVector2Int(21, 54),
-	NewVector2Int(172, 58),
-	NewVector2Int(373, 374),
-	NewVector2Int(163, 144),
-	NewVector2Int(276, 283),
-	NewVector2Int(53, 52),
-	NewVector2Int(365, 379),
-	NewVector2Int(379, 378),
-	NewVector2Int(146, 91),
-	NewVector2Int(263, 249),
-	NewVector2Int(283, 282),
-	NewVector2Int(87, 14),
-	NewVector2Int(145, 153),
-	NewVector2Int(155, 133),
-	NewVector2Int(93, 234),
-	NewVector2Int(66, 107),
-	NewVector2Int(95, 88),
-	NewVector2Int(159, 158),
-	NewVector2Int(52, 65),
-	NewVector2Int(332, 284),
-	NewVector2Int(40, 39),
-	NewVector2Int(191, 80),
-	NewVector2Int(63, 105),
-	NewVector2Int(181, 84),
-	NewVector2Int(466, 388),
-	NewVector2Int(149, 150),
-	NewVector2Int(288, 397),
-	NewVector2Int(160, 159),
-	NewVector2Int(385, 384),
-}
-
 func process(vertToProcess int, vertConnections map[int][]*Vertex, vertLUT map[int]*Vertex) [][]int {
 	connections := vertConnections[vertToProcess]
 
@@ -227,22 +97,22 @@ func process(vertToProcess int, vertConnections map[int][]*Vertex, vertLUT map[i
 			continue
 		}
 
-		middleConnections := vertConnections[connections[middleIndex].Index]
+		connectionsToMiddleVertex := vertConnections[connections[middleIndex].Index]
 
-		for _, endVertex := range middleConnections {
+		for _, potentialEndVertex := range connectionsToMiddleVertex {
 
-			if endVertex.Done {
+			if potentialEndVertex.Done {
 				continue
 			}
 
 			// Check if end vertex is contaied in original list.
 			for end := middleIndex + 1; end < len(connections); end++ {
 				// Their not connected
-				if endVertex != connections[end] {
+				if potentialEndVertex != connections[end] {
 					continue
 				}
 
-				tris = append(tris, []int{vertToProcess, connections[middleIndex].Index, endVertex.Index})
+				tris = append(tris, []int{vertToProcess, connections[middleIndex].Index, potentialEndVertex.Index})
 				break
 			}
 		}
@@ -258,7 +128,14 @@ func process(vertToProcess int, vertConnections map[int][]*Vertex, vertLUT map[i
 	return tris
 }
 
-func clockwise(tri []int, firstFrame []position.Capture) bool {
+func triNormal(tri []int, firstFrame []position.Capture) vector.Vector3 {
+	a := firstFrame[tri[0]].Position()
+	b := firstFrame[tri[1]].Position()
+	c := firstFrame[tri[2]].Position()
+	return b.Sub(a).Cross(c.Sub(a))
+}
+
+func clockwise(aabb *AABB, tri []int, firstFrame []position.Capture) bool {
 	a := firstFrame[tri[0]].Position()
 	b := firstFrame[tri[1]].Position()
 	c := firstFrame[tri[2]].Position()
@@ -268,12 +145,71 @@ func clockwise(tri []int, firstFrame []position.Capture) bool {
 
 	// Winding when viewed from V
 	// w = N . (A - V)
-	return n.Dot(a.Sub(vector.Vector3Forward())) > 0
+	return n.Dot(a.Sub(vector.Vector3Forward())) < 0
+}
+
+func rewindFaces(tris [][]int, firstFrame []position.Capture) {
+	trisProcessed := make(map[int]bool)
+	vertsToTris := make([][]int, 467+1)
+	for triIndex, tri := range tris {
+		vertsToTris[tri[0]] = append(vertsToTris[tri[0]], triIndex)
+		vertsToTris[tri[1]] = append(vertsToTris[tri[1]], triIndex)
+		vertsToTris[tri[2]] = append(vertsToTris[tri[2]], triIndex)
+		trisProcessed[triIndex] = false
+	}
+
+	triToNeighbors := make([]map[int]bool, len(tris))
+	for triIndex, tri := range tris {
+		triToNeighbors[triIndex] = make(map[int]bool)
+		for _, vertsTri := range vertsToTris[tri[0]] {
+			triToNeighbors[triIndex][vertsTri] = false
+		}
+		for _, vertsTri := range vertsToTris[tri[1]] {
+			triToNeighbors[triIndex][vertsTri] = false
+		}
+		for _, vertsTri := range vertsToTris[tri[2]] {
+			triToNeighbors[triIndex][vertsTri] = false
+		}
+	}
+
+	triNormals := make([]vector.Vector3, len(tris))
+	for triIndex, tri := range tris {
+		triNormals[triIndex] = triNormal(tri, firstFrame)
+	}
+
+	queue := make([]int, 0)
+
+	// Push to the queue
+	queue = append(queue, 0)
+
+	var triIndex int
+	for len(queue) > 0 {
+		triIndex, queue = queue[0], queue[1:]
+
+		// Skip if we've already been processed in the past
+		if trisProcessed[triIndex] {
+			continue
+		}
+		trisProcessed[triIndex] = true
+
+		for neighborIndex := range triToNeighbors[triIndex] {
+			if trisProcessed[neighborIndex] {
+				continue
+			}
+			queue = append(queue, neighborIndex)
+
+			otherSide := triNormal([]int{tris[neighborIndex][2], tris[neighborIndex][1], tris[neighborIndex][0]}, firstFrame)
+			if triNormals[triIndex].Dot(triNormals[neighborIndex]) < triNormals[triIndex].Dot(otherSide) {
+				tris[neighborIndex][0], tris[neighborIndex][2] = tris[neighborIndex][2], tris[neighborIndex][0]
+				triNormals[neighborIndex] = otherSide
+			}
+		}
+	}
 }
 
 // tesselate is a pretty poor function I'm writing drunk just to get this done.
 // There are probably most definantly better ways to do this.
-func tesselate(firstFrame []position.Capture) [][]int {
+func tesselate(aabb *AABB, firstFrame []position.Capture) [][]int {
 	numVerts := 467 + 1
 
 	vertLUT := make(map[int]*Vertex)
@@ -282,7 +218,20 @@ func tesselate(firstFrame []position.Capture) [][]int {
 	}
 
 	vertConnections := make(map[int][]*Vertex)
+	processed := make(map[string]bool)
 	for _, line := range lineSegments {
+
+		// Avoid processesing duplicate line segments
+		id := fmt.Sprintf("%d-%d", line.X, line.Y)
+		if line.Y < line.X {
+			id = fmt.Sprintf("%d-%d", line.Y, line.X)
+		}
+
+		if _, ok := processed[id]; ok {
+			continue
+		}
+		processed[id] = true
+
 		if val, ok := vertConnections[line.X]; ok {
 			vertConnections[line.X] = append(val, vertLUT[line.Y])
 		} else {
@@ -299,11 +248,14 @@ func tesselate(firstFrame []position.Capture) [][]int {
 	tris := make([][]int, 0)
 	tris = append(tris, process(0, vertConnections, vertLUT)...)
 
+	// Get the tris facing the generally correct direction
 	for _, tri := range tris {
-		if clockwise(tri, firstFrame) {
+		if !clockwise(aabb, tri, firstFrame) {
 			tri[0], tri[2] = tri[2], tri[0]
 		}
 	}
+
+	rewindFaces(tris, firstFrame)
 
 	return tris
 }
@@ -312,7 +264,19 @@ type RunningData struct {
 	captures [][]position.Capture
 }
 
-func (rd *RunningData) toRecording() format.Recording {
+func triIndicesForFace(tris [][]int, faceIndex int) []string {
+	offset := 478 * faceIndex
+	allTris := make([]string, len(tris)*3)
+	for i, tri := range tris {
+		offsetI := (i * 3)
+		allTris[offsetI] = strconv.Itoa(tri[0] + offset)
+		allTris[offsetI+1] = strconv.Itoa(tri[1] + offset)
+		allTris[offsetI+2] = strconv.Itoa(tri[2] + offset)
+	}
+	return allTris
+}
+
+func (rd *RunningData) toRecording(aabb *AABB) format.Recording {
 	childrenRecordings := make([]format.Recording, len(rd.captures))
 
 	childStyling := metadata.EmptyBlock()
@@ -320,7 +284,18 @@ func (rd *RunningData) toRecording() format.Recording {
 	// childStyling.Mapping()["recolude-color"] = metadata.NewStringProperty("#00FFFF")
 	childStyling.Mapping()["recolude-geom"] = metadata.NewStringProperty("none")
 
+	eyeStyling := metadata.EmptyBlock()
+	eyeStyling.Mapping()["recolude-scale"] = metadata.NewStringProperty("0.015, 0.015, 0.015")
+	eyeStyling.Mapping()["recolude-color"] = metadata.NewStringProperty("#00FFFF")
+	eyeStyling.Mapping()["recolude-geom"] = metadata.NewStringProperty("sphere")
+	eyeStyling.Mapping()["body-part"] = metadata.NewStringProperty("pupil")
+
 	for i, col := range rd.captures {
+		block := childStyling
+		if i%478 == 473 || i%478 == 468 {
+			block = eyeStyling
+		}
+
 		childrenRecordings[i] = format.NewRecording(
 			strconv.Itoa(i),
 			strconv.Itoa(i),
@@ -328,51 +303,52 @@ func (rd *RunningData) toRecording() format.Recording {
 				position.NewCollection("Position", col),
 			},
 			nil,
-			childStyling,
+			block,
 			nil,
 			nil,
 		)
 	}
 
-	tris := tesselate(rd.FirstFrame())
-	allTris := make([]string, len(tris)*3)
-	for i, tri := range tris {
-		offsetI := i * 3
-		allTris[offsetI] = strconv.Itoa(tri[0])
-		allTris[offsetI+1] = strconv.Itoa(tri[1])
-		allTris[offsetI+2] = strconv.Itoa(tri[2])
-	}
-	metadataMeshes := []metadata.Block{
-		metadata.NewBlock(map[string]metadata.Property{
+	tris := tesselate(aabb, rd.FirstFrame())
+	metadataMeshes := make([]metadata.Block, len(rd.captures)/478)
+	for faceIndex := 0; faceIndex < len(rd.captures)/478; faceIndex++ {
+		metadataMeshes[faceIndex] = metadata.NewBlock(map[string]metadata.Property{
 			"type": metadata.NewStringProperty("subject-as-vertices"),
-			"tris": metadata.NewStringArrayProperty(allTris),
-		}),
+			"tris": metadata.NewStringArrayProperty(triIndicesForFace(tris, faceIndex)),
+		})
 	}
 
 	metadataLines := make([]metadata.Block, 0, len(landmarkContours)+len(landmarkIrises))
-	for _, link := range landmarkContours {
-		mapping := map[string]metadata.Property{
-			"starting-object-id": metadata.NewStringProperty(strconv.Itoa(int(link.X))),
-			"ending-object-id":   metadata.NewStringProperty(strconv.Itoa(int(link.Y))),
-			"color":              metadata.NewStringProperty("#00FF00"),
-			"width":              metadata.NewFloat32Property(0.01),
+
+	// Uncomment if you want all the lines around the face
+	// for _, link := range landmarkContours {
+	// 	mapping := map[string]metadata.Property{
+	// 		"starting-object-id": metadata.NewStringProperty(strconv.Itoa(int(link.X))),
+	// 		"ending-object-id":   metadata.NewStringProperty(strconv.Itoa(int(link.Y))),
+	// 		"color":              metadata.NewStringProperty("#00FF00"),
+	// 		"width":              metadata.NewFloat32Property(0.01),
+	// 	}
+	// 	metadataLines = append(metadataLines, metadata.NewBlock(mapping))
+	// }
+
+	for faceIndex := 0; faceIndex < len(rd.captures)/478; faceIndex++ {
+		for _, link := range landmarkIrises {
+			mapping := map[string]metadata.Property{
+				"starting-object-id": metadata.NewStringProperty(strconv.Itoa(int(link.X) + (faceIndex * 478))),
+				"ending-object-id":   metadata.NewStringProperty(strconv.Itoa(int(link.Y) + (faceIndex * 478))),
+				"color":              metadata.NewStringProperty("#00FFFF"),
+				"width":              metadata.NewFloat32Property(0.0025),
+			}
+			metadataLines = append(metadataLines, metadata.NewBlock(mapping))
 		}
-		metadataLines = append(metadataLines, metadata.NewBlock(mapping))
 	}
-	for _, link := range landmarkIrises {
-		mapping := map[string]metadata.Property{
-			"starting-object-id": metadata.NewStringProperty(strconv.Itoa(int(link.X))),
-			"ending-object-id":   metadata.NewStringProperty(strconv.Itoa(int(link.Y))),
-			"color":              metadata.NewStringProperty("#FF0000"),
-			"width":              metadata.NewFloat32Property(0.0025),
-		}
-		metadataLines = append(metadataLines, metadata.NewBlock(mapping))
-	}
+
 	recordingMetadata := metadata.EmptyBlock()
 	recordingMetadata.Mapping()["recolude-lines"] = metadata.NewMetadataArrayProperty(metadataLines)
 	recordingMetadata.Mapping()["recolude-meshes"] = metadata.NewMetadataArrayProperty(metadataMeshes)
 	recordingMetadata.Mapping()["recolude-sun-position"] = metadata.NewVector3Property(0, 200, -100)
 	recordingMetadata.Mapping()["recolude-grid"] = metadata.NewStringProperty("false")
+	recordingMetadata.Mapping()["recolude-skybox"] = metadata.NewStringProperty("webplayer-assets/examples/landmarks/nightskycolor.png")
 
 	return format.NewRecording(
 		"face",
@@ -428,11 +404,7 @@ func main() {
 	byteValue, err := ioutil.ReadAll(jsonFile)
 	check(err)
 
-	// we initialize our Users array
 	var frames [][]LandMark
-
-	// we unmarshal our byteArray which contains our
-	// jsonFile's content into 'users' which we defined above
 	check(json.Unmarshal(byteValue, &frames))
 
 	// Calc AABB to shift to center
@@ -462,5 +434,5 @@ func main() {
 		f,
 		rapio.BST16,
 	)
-	recordingWriter.Write(rd.toRecording())
+	recordingWriter.Write(rd.toRecording(aabb))
 }

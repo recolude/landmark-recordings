@@ -19,7 +19,7 @@ ffmpeg -i in.mp4 frames/frame_%04d.png -hide_banner
 ### Run the Landmark Identification Software
 
 ```bash
-python pose.py
+python pose/pose.py
 ```
 
 ### Rebuilding the Video

@@ -22,10 +22,9 @@ def video_image_files(dir):
 def process_frames(frames, out_frame_path, out_path):
     data_out = []
 
-    # For static images:
     with mp_face_mesh.FaceMesh(
             static_image_mode=False,
-            max_num_faces=1,
+            max_num_faces=2,
             refine_landmarks=True,
             min_detection_confidence=0.5) as face_mesh:
 
@@ -39,15 +38,16 @@ def process_frames(frames, out_frame_path, out_path):
                 continue
 
             entry = []
-            i = 0
 
             annotated_image = image.copy()
+            face_index = 0
             for face_landmarks in results.multi_face_landmarks:
 
                 i = 0
                 for mark in face_landmarks.landmark:
                     entry.append({
                         "id": i,
+                        "face-id": face_index,
                         "x": mark.x,
                         "y": mark.y,
                         "z": mark.z,
@@ -79,6 +79,8 @@ def process_frames(frames, out_frame_path, out_path):
                     landmark_drawing_spec=None,
                     connection_drawing_spec=mp_drawing_styles
                     .get_default_face_mesh_iris_connections_style())
+
+                face_index += 1
 
             out_img_path = os.path.join(
                 out_frame_path, f"frame_{str(idx + 1).zfill(4)}.png")
